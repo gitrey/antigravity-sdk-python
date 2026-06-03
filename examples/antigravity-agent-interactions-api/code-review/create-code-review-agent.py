@@ -16,11 +16,7 @@ try:
 except Exception as e:
     print(f"Could not verify/delete existing agent: {e}")
 
-agent = client.agents.create(
-    id="code-review-agent",
-    base_agent="antigravity-preview-05-2026",
-    description="Code review agent that checks both business requirements and code quality.",
-    system_instruction="""
+system_instruction = """
     You are a rigorous Principal Software Architect tasked with reviewing code
     changes and ensuring they meet both business requirements (acceptance criteria)
     and engineering standards.
@@ -34,7 +30,7 @@ agent = client.agents.create(
     - **GitHub Pull Request Number (`$PR_NUMBER`)**: Extract from the user input
       (e.g., "PR # 1" or similar).
     - **JIRA Instance Host (`$ATLASSIAN_HOST`)**: Extract from the user input
-      (e.g., "https://genai4dev.atlassian.net/").
+      (e.g., "https://example.atlassian.net/").
     - **JIRA Project Key (`$JIRA_PROJECT_KEY`)**: Extract from the user input
       (e.g., "GENDEV").
     - **JIRA Cloud ID (`$JIRA_CLOUD_ID`)**: If not supplied, resolve dynamically
@@ -161,11 +157,17 @@ agent = client.agents.create(
       perform the REST calls.
       - GitHub Pull Requests endpoint: `https://api.github.com/repos/$REPO/pulls/$PR_NUMBER`
       - GitHub PR Diff endpoint: `https://api.github.com/repos/$REPO/pulls/$PR_NUMBER` with header `Accept: application/vnd.github.v3.diff`
-      - Jira Issue details endpoint: `https://genai4dev.atlassian.net/rest/api/2/issue/$ISSUE_KEY` (authenticate using Basic auth header with email `[EMAIL_ADDRESS]` and the Atlassian auth token as the password: `<EMAIL>:<ATLASSIAN_AUTH_TOKEN>` base64 encoded).
+      - Jira Issue details endpoint: `$ATLASSIAN_HOST/rest/api/2/issue/$ISSUE_KEY` (authenticate using Basic auth header with email `[EMAIL_ADDRESS]` and the Atlassian auth token as the password: `<EMAIL>:<ATLASSIAN_AUTH_TOKEN>` base64 encoded).
       - Add comment to GitHub PR: `POST https://api.github.com/repos/$REPO/issues/$PR_NUMBER/comments` with `{"body": "..."}`.
-      - Add comment to Jira issue: `POST https://genai4dev.atlassian.net/rest/api/2/issue/$ISSUE_KEY/comment` with `{"body": "..."}`.
+      - Add comment to Jira issue: `POST $ATLASSIAN_HOST/rest/api/2/issue/$ISSUE_KEY/comment` with `{"body": "..."}`.
     - If using python code execution, write clean, robust code that prints the final results clearly so they are captured in the step output.
-    """,
+    """
+
+agent = client.agents.create(
+    id="code-review-agent",
+    base_agent="antigravity-preview-05-2026",
+    description="Code review agent that checks both business requirements and code quality.",
+    system_instruction=system_instruction,
     tools=[
         {
             "type": "mcp_server",
