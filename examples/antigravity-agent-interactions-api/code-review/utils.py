@@ -1,3 +1,10 @@
+"""Shared configuration and utility functions for code review examples.
+
+This module provides common helper functions to load local environmental variables,
+initialize the Google GenAI Client with billing headers, and retrieve sensitive tokens
+from Google Cloud Secret Manager.
+"""
+
 import os
 import subprocess
 from google import genai
@@ -5,6 +12,10 @@ from google.genai import types
 
 
 def load_env():
+    """Reads a local .env file manually and registers its variables in os.environ.
+    
+    This avoids dependencies on external dotenv libraries while keeping scripts portable.
+    """
     # Find .env relative to the current file location
     env_path = os.path.join(os.path.dirname(__file__), ".env")
     if os.path.exists(env_path):
@@ -15,13 +26,17 @@ def load_env():
                     os.environ[key.strip()] = val.strip().strip('"').strip("'")
 
 
-# Load environment on import
+# Load environmental variables immediately on module import
 load_env()
 
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "default")
 
 
 def get_client() -> genai.Client:
+    """Initializes and returns a Google GenAI Client configured for Vertex AI.
+    
+    Attaches the required X-Goog-User-Project billing header to verify access rights.
+    """
     return genai.Client(
         vertexai=True,
         project=PROJECT_ID,
@@ -31,6 +46,11 @@ def get_client() -> genai.Client:
 
 
 def get_secret(secret_name, env_var_fallback=None):
+    """Retrieves a secret version value from Google Cloud Secret Manager.
+    
+    If the secret query fails or env_var_fallback is provided and set,
+    it falls back to reading from local environment variables.
+    """
     if env_var_fallback:
         fallback = os.environ.get(env_var_fallback)
         if fallback:
@@ -54,3 +74,4 @@ def get_secret(secret_name, env_var_fallback=None):
     except Exception as e:
         print(f"Error fetching secret {secret_name}: {e}")
         return ""
+

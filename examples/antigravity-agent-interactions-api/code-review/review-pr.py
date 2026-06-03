@@ -1,12 +1,22 @@
+"""Example demonstrating how to launch a remote, asynchronous code review interaction.
+
+This script triggers the custom 'code-review-agent' to review a specific pull request
+in background mode. It then polls the interaction status API until completion and
+outputs the final review findings.
+"""
+
 import os
 import time
 from utils import get_client
 
+# Initialize GenAI client
 client = get_client()
 
+# Fetch target JIRA environment variables loaded from .env
 jira_instance = os.environ.get("JIRA_INSTANCE", "default")
 jira_project_key = os.environ.get("JIRA_PROJECT_KEY", "default")
 jira_cloud_id = os.environ.get("JIRA_CLOUD_ID", "default")
+
 
 result = client.interactions.create(
     agent="code-review-agent",

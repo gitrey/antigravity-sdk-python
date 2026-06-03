@@ -1,12 +1,23 @@
+"""Script to create or update the custom 'code-review-agent' definition.
+
+This script fetches remote GitHub and Jira secrets via Google Cloud Secret Manager,
+deletes any existing 'code-review-agent' to ensure a clean state, and registers
+the new agent definition with extensive system instructions for automated PR review
+and Jira issue verification.
+"""
+
 from utils import get_client, get_secret
 
+# Fetch required credentials from GCP Secret Manager (falls back to local environment vars)
 github_token = get_secret("GITHUB_REPO_ACCESS_TOKEN")
 atlassian_token = get_secret("ATLASSIAN_AUTH_TOKEN")
 
+# Initialize the GenAI Client using shared configuration utility
 client = get_client()
 
 
-# Check and delete the agent if it already exists
+# Check and delete the agent if it already exists to allow updating the instructions/tools
+
 try:
     agents = client.agents.list()
     for a in agents.agents or []:

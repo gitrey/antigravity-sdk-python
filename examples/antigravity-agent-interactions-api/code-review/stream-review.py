@@ -1,16 +1,28 @@
+"""Example demonstrating how to launch a code review and stream results in real time.
+
+This script triggers the 'code-review-agent' with `stream=True` and listens to
+real-time stream events (such as tool start/stop, text updates, code execution logs,
+and final outputs). It also filters credentials/secrets to prevent leakage in stdout.
+"""
+
 import os
 import sys
 from utils import get_client, get_secret
 
+# Fetch credentials (falls back to local environment vars if not in GCP Secret Manager)
 github_token = get_secret("GITHUB_REPO_ACCESS_TOKEN", "GITHUB_TOKEN")
 atlassian_token = get_secret("ATLASSIAN_AUTH_TOKEN", "ATLASSIAN_TOKEN")
+
+# Fetch config values loaded from environment or .env
 repo_name = os.environ.get("REPO", "default")
 pr_num = os.environ.get("PR_NUMBER", "default")
 jira_instance = os.environ.get("JIRA_INSTANCE", "default")
 jira_project_key = os.environ.get("JIRA_PROJECT_KEY", "default")
 jira_cloud_id = os.environ.get("JIRA_CLOUD_ID", "default")
 
+# Initialize GenAI client
 client = get_client()
+
 
 def redact_secrets(text, secrets):
     if not text:
