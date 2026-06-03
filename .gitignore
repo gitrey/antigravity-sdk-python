@@ -120,3 +120,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .antigravitycli/efe42e27-c6c9-4078-8182-b9e6e056c0ce.json
+scratch/test_jira_markup.py
+.env
+.github/workflows/pr-agent-review.yml
+examples/antigravity-agent-interactions-api/code-review/pr-review.yml
