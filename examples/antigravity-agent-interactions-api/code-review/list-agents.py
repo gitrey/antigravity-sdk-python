@@ -12,11 +12,10 @@ client = get_client()
 # Fetch agents within the project scope
 agents = client.agents.list(parent=f"projects/{PROJECT_ID}/locations/global")
 
-print(f"Raw Response: {agents.model_dump_json(by_alias=True)}")
-
 agents_list = agents.agents or []
 
 print(f"Found {len(agents_list)} Antigravity agents:")
 
 for a in agents_list:
-    print(f"{a}")
+    name_id = a.name.split("/")[-1] if a.name else a.id
+    print(f"Agent ID: {name_id} (Base: {a.base_agent})")

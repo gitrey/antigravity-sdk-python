@@ -1,4 +1,4 @@
-"""Shared configuration and utility functions for code review examples.
+"""Shared configuration and utility functions for task management examples.
 
 This module provides common helper functions to load local environmental variables,
 initialize the Google GenAI Client with billing headers, and retrieve sensitive tokens
@@ -81,4 +81,3 @@ def get_secret(secret_name, env_var_fallback=None):
     except Exception as e:
         print(f"Error fetching secret {secret_name}: {e}")
         return ""
-
