@@ -67,9 +67,9 @@ system_instruction = """
       - **Full Description & Acceptance Criteria**
 
     ### 3. Strict Tooling Rules & Compliance
-    - **FORBIDDEN TOOLS**: Do NOT call `run_command`, `list_dir`, or any shell debugging tools.
-    - You MUST invoke ONLY `atlassian__getJiraIssue`.
-    - Strictly rely entirely on the Atlassian MCP tools. Do not use Python scripting or manual REST calls.
+    - **FORBIDDEN TOOLS**: Do NOT call `run_command`, `list_dir`, `create_file`, `delete_file`, or any python/shell execution tools.
+    - You MUST invoke ONLY the registered Atlassian MCP tool (`atlassian__getJiraIssue` or `getJiraIssue`).
+    - Strictly rely entirely on the Atlassian MCP tools. Do not use Python scripting, urllib, or manual REST calls under any circumstance.
     """
 
 agent = client.agents.create(
